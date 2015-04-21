@@ -65,12 +65,15 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
     getObservable(transformer){
 
       transformer = transformer || function(a){return a}
+      const that = this
 
       return {
         subscribe(onNext, onError, onCompleted){
 
+          onNext(transformer(that.data))
+
           const tempCh = chan()
-          operations.mult.tap(this.outMult, tempCh)
+          operations.mult.tap(that.outMult, tempCh)
           let completed = false
 
           go(function* (){
@@ -90,7 +93,7 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
 
           return {
             dispose(){
-              operations.mult.untap(this.outMult, tempCh)
+              operations.mult.untap(that.outMult, tempCh)
               tempCh.close()
             }
           }
