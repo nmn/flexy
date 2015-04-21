@@ -8,7 +8,7 @@
     "watch": "npm run watchFolder & npm run watchFile",
     "watchFolder": "babel src --out-dir lib --watch",
     "watchFile": "watchify --debug -t babelify src/index.js -o dist/index.js -v",
-    "build": "babel src --out-dir lib --watch"
+    "build": "babel src --out-dir lib"
   },
   "keywords": [
     "Flux",
