@@ -1,6 +1,6 @@
 {
   "name": "flexy",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Flux library based on Channels and reducer functions",
   "main": "lib/index.js",
   "scripts": {
@@ -19,9 +19,11 @@
   ],
   "author": "Naman Goel",
   "license": "MIT",
-  "dependencies": {
-    "immutable": "^3.7.2",
+  "peerDependencies": {
     "js-csp": "^0.4.0",
+    "immutable": "^3.7.2"
+  },
+  "dependencies": {
     "transducers.js": "^0.3.1"
   },
   "devDependencies": {
