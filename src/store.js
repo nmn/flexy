@@ -55,9 +55,9 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
       // const oldData = this.data
       const fnsToApply = this.reducers.takeWhile(v => v > 0)
       this.reducers = this.reducers.skipWhile(v => v > 0).filter(v => v >= 0)
-      this.data = fnsToApply.reduce((value, fn) => fn(value), this.data)
+      this.data = fnsToApply.reduce((value, val, fn) => fn(value), this.data)
 
-      const dataToSend = this.reducers.reduce((value, fn) => fn(value), this.data)
+      const dataToSend = this.reducers.reduce((value, val, fn) => fn(value), this.data)
 
       putAsync(this.outCh, dataToSend)
     }
