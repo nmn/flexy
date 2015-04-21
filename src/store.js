@@ -177,7 +177,7 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
                        , {payload, promise}
                        )
       } else if(transformers[name]){
-        let cached = (data) => transformers[name](data, action)
+        let cached = (data) => transformers[name](data, payload)
         that.reducers = that.reducers.set(cached, 0)
         promise
           .then(() => {
