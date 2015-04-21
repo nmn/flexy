@@ -163,7 +163,7 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
                              that.reducers = that.reducers.set(cached, 1)
                              that.trigger()
                              cached = null
-                             putAsync(this.throughCh, action)
+                             putAsync(that.throughCh, action)
                              return true
                            }
                          , reject(){
@@ -173,7 +173,7 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
                              that.reducers = that.reducers.set(cached, -1)
                              that.trigger()
                              cached = null
-                             putAsync(this.throughCh, action)
+                             putAsync(that.throughCh, action)
                              return true
                            }
                          }
@@ -186,16 +186,16 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
           .then(() => {
             that.reducers = that.reducers.set(cached, 1)
             that.trigger()
-            putAsync(this.throughCh, action)
+            putAsync(that.throughCh, action)
           })
           .catch((err) => {
             that.reducers = that.reducers.set(cached, -1)
             that.trigger()
             console.error(err)
-            putAsync(this.throughCh, action)
+            putAsync(that.throughCh, action)
           })
       } else {
-        putAsync(this.throughCh, action)
+        putAsync(that.throughCh, action)
       }
     }
   }
