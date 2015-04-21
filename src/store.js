@@ -182,18 +182,25 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
       } else if(transformers[name]){
         let cached = (data) => transformers[name](data, payload)
         that.reducers = that.reducers.set(cached, 0)
-        promise
-          .then(() => {
-            that.reducers = that.reducers.set(cached, 1)
-            that.trigger()
-            putAsync(that.throughCh, action)
-          })
-          .catch((err) => {
-            that.reducers = that.reducers.set(cached, -1)
-            that.trigger()
-            console.error(err)
-            putAsync(that.throughCh, action)
-          })
+        that.trigger()
+        if(promise){
+          promise
+            .then(() => {
+              that.reducers = that.reducers.set(cached, 1)
+              that.trigger()
+              putAsync(that.throughCh, action)
+            })
+            .catch((err) => {
+              that.reducers = that.reducers.set(cached, -1)
+              that.trigger()
+              console.error(err)
+              putAsync(that.throughCh, action)
+            })
+        } else {
+          that.reducers = that.reducers.set(cached, 1)
+          putAsync(that.throughCh, action)
+        }
+        
       } else {
         putAsync(that.throughCh, action)
       }
