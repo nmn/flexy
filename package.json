@@ -1,6 +1,6 @@
 {
   "name": "flexy",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A Flux library based on Channels and reducer functions",
   "main": "lib/index.js",
   "scripts": {

@@ -70,7 +70,7 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
       return {
         subscribe(onNext, onError, onCompleted){
 
-          onNext(transformer(that.data))
+          onNext(transformer(that.reducers.filter(v => v >= 0).reduce((value, val, fn) => fn(value), that.data)))
 
           const tempCh = chan()
           operations.mult.tap(that.outMult, tempCh)
@@ -182,8 +182,8 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
       } else if(transformers[name]){
         let cached = (data) => transformers[name](data, payload)
         that.reducers = that.reducers.set(cached, 0)
-        that.trigger()
         if(promise){
+          that.trigger()
           promise
             .then(() => {
               that.reducers = that.reducers.set(cached, 1)
@@ -198,6 +198,7 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
             })
         } else {
           that.reducers = that.reducers.set(cached, 1)
+          that.trigger()
           putAsync(that.throughCh, action)
         }
         

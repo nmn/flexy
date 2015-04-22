@@ -46,6 +46,8 @@ export function defineDispatcher({transformers}){
           transformers[name] ? transformers[name](name)
           : name
         putAsync(this.outCh, obj)
+      } else {
+        console.warn('dispatched event without a name', name)
       }
     }
   }
