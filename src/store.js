@@ -1,10 +1,11 @@
 import I from 'immutable'
 import {chan, go, operations, buffers, take, put, takeAsync, putAsync, CLOSED} from 'js-csp'
-import {compose, map, filter, dedupe} from 'transducers.js'
+import {compose, map, filter, dedupe, merge} from 'transducers.js'
+
 
 export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}){
   return class {
-    constructor(initialData){
+    constructor(initialData, ctx2){
       this.data =
         !initialData ?
           I.Map()
@@ -13,6 +14,8 @@ export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}
         : typeof initialData === 'object' ?
           I.Map( initialData )
         : I.Map()
+
+      this.context = merge({}, ctx, ctx2)
 
       this.reducers = I.OrderedMap()
 
@@ -152,7 +155,7 @@ export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}
       if(consumers[name]){
         let cached = null
         consumers[name]
-           .call( ctx
+           .call( this.context
                 , { apply(fn){
                       if(cached){
                         that.reducers = that.reducers.set(cached, -1)
@@ -185,7 +188,7 @@ export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}
                 , { payload, promise}
                 )
       } else if(transformers[name]){
-        let cached = (data) => transformers[name].call(ctx, data, payload)
+        let cached = (data) => transformers[name].call(this.context, data, payload)
         that.reducers = that.reducers.set(cached, 0)
         if(promise){
           that.trigger()
