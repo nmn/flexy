@@ -8,7 +8,7 @@
     "watch": "npm run watchFolder & npm run watchFile",
     "watchFolder": "babel src --out-dir lib --watch --optional es7.objectRestSpread",
     "watchFile": "watchify --debug -t [ babelify --optional es7.objectRestSpread ] src/index.js -o dist/index.js -v",
-    "build": "babel src --out-dir --optional es7.objectRestSpread lib"
+    "build": "babel src --out-dir lib --optional es7.objectRestSpread"
   },
   "keywords": [
     "Flux",
