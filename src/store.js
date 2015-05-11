@@ -2,7 +2,7 @@ import I from 'immutable'
 import {chan, go, operations, buffers, take, put, takeAsync, putAsync, CLOSED} from 'js-csp'
 import {compose, map, filter, dedupe} from 'transducers.js'
 
-export function defineStore({primaryKey = 'id', consumers, transformers}){
+export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}){
   return class {
     constructor(initialData){
       this.data =
@@ -151,36 +151,41 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
       // if the async operation fails, reject should be called. This will roll back the change.
       if(consumers[name]){
         let cached = null
-        consumers[name]( { apply(fn){
-                             cached = fn
-                             that.reducers = that.reducers.set(fn, 0)
-                             that.trigger()
-                           }
-                         , commit(){
-                             if(!cached){
-                               return false
-                             }
-                             that.reducers = that.reducers.set(cached, 1)
-                             that.trigger()
-                             cached = null
-                             putAsync(that.throughCh, action)
-                             return true
-                           }
-                         , reject(){
-                             if(!cached){
-                               return false
-                             }
-                             that.reducers = that.reducers.set(cached, -1)
-                             that.trigger()
-                             cached = null
-                             putAsync(that.throughCh, action)
-                             return true
-                           }
-                         }
-                       , {payload, promise}
-                       )
+        consumers[name]
+           .call( ctx
+                , { apply(fn){
+                      if(cached){
+                        that.reducers = that.reducers.set(cached, -1)
+                      }
+                      cached = fn
+                      that.reducers = that.reducers.set(fn, 0)
+                      that.trigger()
+                    }
+                  , commit(){
+                      if(!cached){
+                        return false
+                      }
+                      that.reducers = that.reducers.set(cached, 1)
+                      that.trigger()
+                      cached = null
+                      putAsync(that.throughCh, action)
+                      return true
+                    }
+                  , reject(){
+                      if(!cached){
+                        return false
+                      }
+                      that.reducers = that.reducers.set(cached, -1)
+                      that.trigger()
+                      cached = null
+                      putAsync(that.throughCh, action)
+                      return true
+                    }
+                  }
+                , { payload, promise}
+                )
       } else if(transformers[name]){
-        let cached = (data) => transformers[name](data, payload)
+        let cached = (data) => transformers[name].call(ctx, data, payload)
         that.reducers = that.reducers.set(cached, 0)
         if(promise){
           that.trigger()
@@ -201,7 +206,6 @@ export function defineStore({primaryKey = 'id', consumers, transformers}){
           that.trigger()
           putAsync(that.throughCh, action)
         }
-        
       } else {
         putAsync(that.throughCh, action)
       }

@@ -1,14 +1,14 @@
 {
   "name": "flexy",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "description": "A Flux library based on Channels and reducer functions",
   "main": "lib/index.js",
   "scripts": {
     "prepublish": "npm run build",
     "watch": "npm run watchFolder & npm run watchFile",
-    "watchFolder": "babel src --out-dir lib --watch",
-    "watchFile": "watchify --debug -t babelify src/index.js -o dist/index.js -v",
-    "build": "babel src --out-dir lib"
+    "watchFolder": "babel src --out-dir lib --watch --optional es7.objectRestSpread",
+    "watchFile": "watchify --debug -t [ babelify --optional es7.objectRestSpread ] src/index.js -o dist/index.js -v",
+    "build": "babel src --out-dir --optional es7.objectRestSpread lib"
   },
   "keywords": [
     "Flux",
@@ -20,16 +20,16 @@
   "author": "Naman Goel",
   "license": "MIT",
   "peerDependencies": {
-    "js-csp": "^0.4.0",
+    "js-csp": "^0.4.1",
     "immutable": "^3.7.2"
   },
   "dependencies": {
-    "transducers.js": "^0.3.1"
+    "transducers.js": "^0.3.2"
   },
   "devDependencies": {
-    "babel": "^5.1.10",
+    "babel": "^5.2.17",
     "babelify": "^6.0.2",
-    "browserify": "^9.0.8",
-    "watchify": "^3.1.1"
+    "browserify": "^10.1.3",
+    "watchify": "^3.2.1"
   }
 }
