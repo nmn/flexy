@@ -1,10 +1,11 @@
-import {chan, go, operations, buffers, take, put, takeAsync, putAsync, CLOSED} from 'js-csp'
+import {chan, go, operations, buffers, take, putAsync, CLOSED} from 'js-csp'
+import {compose, filter} from 'transducers.js'
 
 export function defineDispatcher({transformers}){
   return class {
 
     constructor(){
-      this.outCh = chan(buffers.fixed(10))
+      this.outCh = chan(buffers.fixed(10), compose(filter(value => !!value)))
       this.outMult = operations.mult(this.outCh)
     }
 
