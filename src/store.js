@@ -86,8 +86,6 @@ export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}
             onNext(initialData)
           }
 
-          onNext()
-
           const tempCh = chan()
           operations.mult.tap(that.outMult, tempCh)
           let completed = false
