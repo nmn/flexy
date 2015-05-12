@@ -65,7 +65,7 @@ export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}
       putAsync(this.outCh, dataToSend)
     }
 
-    getObservable(transformer){
+    getObservable(transformer, onUndefined){
 
       transformer = transformer || function(a){return a}
       const that = this
@@ -73,7 +73,20 @@ export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}
       return {
         subscribe(onNext, onError, onCompleted){
 
-          onNext(transformer(that.reducers.filter(v => v >= 0).reduce((value, val, fn) => fn(value), that.data)))
+          const initialData =
+            transformer(
+              that.reducers
+                  .filter(v => v >= 0)
+                  .reduce( (value, val, fn) => fn(value), that.data)
+            )
+
+          if(initialData === undefined){
+            typeof onUndefined === 'function' && onUndefined()
+          } else {
+            onNext(initialData)
+          }
+
+          onNext()
 
           const tempCh = chan()
           operations.mult.tap(that.outMult, tempCh)
