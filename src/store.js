@@ -10,9 +10,9 @@ export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}
         !initialData ?
           I.Map()
         : Array.isArray(initialData) && primaryKey ?
-          I.Map( initialData.reduce((collection, obj) => Object.assign(collection, {[obj[primaryKey]]: obj}), {}) )
+          I.fromJS( initialData.reduce((collection, obj) => Object.assign(collection, {[obj[primaryKey]]: obj}), {}) )
         : typeof initialData === 'object' ?
-          I.Map( initialData )
+          I.fromJS( initialData )
         : I.Map()
 
       this.context = merge({}, ctx, ctx2)
