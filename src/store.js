@@ -82,6 +82,7 @@ export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}
 
           if(initialData === undefined){
             typeof onUndefined === 'function' && onUndefined()
+            onNext(undefined)
           } else {
             onNext(initialData)
           }
