@@ -62,6 +62,7 @@ export function defineDispatcher({transformers}){
           transformers[name] ? transformers[name]({name, payload, promise})
           : {name, payload, promise}
         putAsync(this.outCh, obj)
+        this.broadcast(obj)
       } else if(typeof name === 'object' && typeof name.name === 'object'){
         let obj =
           transformers[name] ? transformers[name](name)
