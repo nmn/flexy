@@ -1,5 +1,6 @@
 import {chan, go, operations, buffers, take, putAsync, CLOSED} from 'js-csp'
 import {compose, filter} from 'transducers.js'
+import I from 'immutable'
 
 export function defineDispatcher({transformers}){
   return class {
@@ -7,6 +8,7 @@ export function defineDispatcher({transformers}){
     constructor(){
       this.outCh = chan(buffers.fixed(10), compose(filter(value => !!value)))
       this.outMult = operations.mult(this.outCh)
+      this._subscribers = I.Set()
     }
 
     listen(source){
@@ -32,6 +34,24 @@ export function defineDispatcher({transformers}){
       return this
     }
 
+    broadcast(value){
+      this._subscribers
+        .map(list => list.toJS())
+        .forEach(([subscriber, ctx]) => subscriber.call(ctx, value))
+    }
+
+    subscribe(fn, ctx = null){
+      const list = I.List([fn, ctx])
+      this._subscribers = this._subscribers.add( list )
+      return list
+    }
+
+    unsubscribe(fn, ctx = null){
+      const list = I.List([fn, ctx])
+      this._subscribers = this._subscribers.delete( list )
+      return list
+    }
+
     emit(...args){
       this.trigger(...args)
     }
@@ -47,6 +67,7 @@ export function defineDispatcher({transformers}){
           transformers[name] ? transformers[name](name)
           : name
         putAsync(this.outCh, obj)
+        this.broadcast(obj)
       } else {
         console.warn('dispatched event without a name', name)
       }

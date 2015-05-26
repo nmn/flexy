@@ -31,6 +31,16 @@ export function defineStore({primaryKey = 'id', consumers, transformers, ...ctx}
       return JSON.stringify(this.data)
     }
 
+    subscribeTo(dispatcher){
+      dispatcher.subscribe(this.handleAction, this)
+      return this
+    }
+
+    unsubscribeFrom(dispatcher){
+      dispatcher.unsubscribe(this.handleAction, this)
+      return this
+    }
+
     listen(source){
 
       if(source.outMult && source.throughMult){
