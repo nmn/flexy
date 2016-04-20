@@ -1,4 +1,6 @@
-# flexy
+# flexy - WARNING: END OF LIFE
+
+## Flexy was made months before redux. Redux is superior in almost every way. If you use flexy, you should find a way to transition over to redux. Most of the code should portable using `redux-thunk` and using immtable in your redux store.
 
 Friendly flux based on channels and immutable data.
 
