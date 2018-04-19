@@ -33,7 +33,7 @@ In case you want to use channels, that is easy too. You can just call the `.tap`
 Flexy is based on definining classes. (This will be useful for isomorphic apps, which is coming in the future) You can define a Store class by calling the
 `.defineStore` method with "Transformers", "consumers".
 
-```
+```js
 
 var StoreClass = Flexy.defineStore({
   primaryKey: 'id',
@@ -51,7 +51,7 @@ This is just a simple string
 Transformers are simple functions the current data, and return new data. The functions will also receive the payload sent with the action if any
 
 e.g.:
-```
+```js
 'ACTION_NAME': function(data, payload){
   return data.merge(payload)
 }
@@ -60,7 +60,7 @@ e.g.:
 #### consumers *: Array<function>*
 Consumers are for times when you need finer grain control over the updates of your stores. It's best to show with an example:
 
-```
+```js
 'ACTION_NAME': function({apply, commit, reject}, {payload, promise}){
   apply(function(data){
     return data.setIn([payload.id, 'count'], data.get(payload.id).get(count) + 1)
@@ -92,7 +92,7 @@ If something goes wrong, just call reject, and your change will be rolled back. 
 Other than primaryKey, consumers and transformers, you can pass in arbitrary properties while defining your store, or while instantiating it. All these properties would be made available on the context. This is a simple and powerful way to pass in various dependencies.
 
 
-```
+```js
 var StoreClass = Flexy.defineStore({
   primaryKey: 'id',
   transformers: [...],
@@ -123,17 +123,4 @@ I have been using Flexy in production of upclose.me. New patches and features ar
 So far, I really like how simple but powerful it is. I have found many flux implementation to be too complex, and as a roadbloack while trying to adopt the flux architecture.
 
 If you have any questions, suggestions, and pull requests (would be awesome) feel free to contact me. I'm trying to slowly add more documentation and examples. (help there would be amazing!)
-
-## Future
-Some features I'm working on are:
-- [ ] a way to record all events that are dispatched
-- [ ] an alternate debugging dispatcher, that replays a given list of actions, and ignores any fresh actions.
-- [ ] Adding unique keys to every action to make debugging even easier
-
-Apart from the additions to Flexy core, I'm working on an extention based on superagent, for ajax calls. This will probably live in a seperate npm module. This will have the following features:
-
-- [ ] A built-in way to create batched requests, if your API server supports them
-- [ ] A central place to keep track of pending requests and a callback to fire when all requests are fulfilled. This will make server-side rendering easy. (render to string once. Check for pending requests. Wait for all of them to complete. Render to string again. done.)
-- [ ] A debugging version that can take an initial set of responses mapped to keys to re-play a user's experience after the fact
-
 
